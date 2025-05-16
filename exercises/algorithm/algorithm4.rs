@@ -3,7 +3,6 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -51,12 +50,28 @@ where
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
         //TODO
+        match &mut self.root {
+            Some(node) => node.insert(value),
+            None => self.root = Some(Box::new(TreeNode::new(value))),
+        }
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
         //TODO
-        true
+        fn search_internal<T: Ord>(node: &Option<Box<TreeNode<T>>>, value: &T) -> bool {
+            match node {
+                None => false,
+                Some(n) => {
+                    match value.cmp(&n.value) {
+                        Ordering::Equal => true,
+                        Ordering::Less => search_internal(&n.left, value),
+                        Ordering::Greater => search_internal(&n.right, value),
+                    }
+                }
+            }
+        }
+        search_internal(&self.root, &value)
     }
 }
 
@@ -67,6 +82,29 @@ where
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
         //TODO
+        match value.cmp(&self.value) {
+            Ordering::Equal => return, // 重复值不插入
+            Ordering::Less => {
+                match &mut self.left {
+                    None => {
+                        self.left = Some(Box::new(TreeNode::new(value)));
+                    }
+                    Some(node) => {
+                        node.insert(value);
+                    }
+                }
+            }
+            Ordering::Greater => {
+                match &mut self.right {
+                    None => {
+                        self.right = Some(Box::new(TreeNode::new(value)));
+                    }
+                    Some(node) => {
+                        node.insert(value);
+                    }
+                }
+            }
+        }
     }
 }
 
